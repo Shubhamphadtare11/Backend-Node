@@ -92,106 +92,18 @@ const db = require('./db')
 //vid 7 part 2
 const bodyParser = require('body-parser')
 app.use(bodyParser.json())//it will store parsed data in req.body
-const Person = require('./models/Person');
-const MenuItem = require('./models/MenuItem');
 
 app.get('/', (req, res) => {
   res.send('Hello World!')
 })
 
-//Post route to add a person
-app.post('/person',async(req,res)=>{
+//Import the router files
+const personRoutes = require('./routes/personRoutes');
+const menuItemRoutes = require('./routes/menuItemRoutes');
 
-    try{
-        const data = req.body //Assuming the request body contains the person data
-
-        //Create a new Person document using the mongoose model
-        const newPerson = new Person(data);
-
-        //Save the new person to database
-        const response = await newPerson.save();
-        console.log("data saved successfully!");
-        res.status(200).json(response);
-    }
-    catch(error){
-        console.log(error);
-        res.status(500).json({error:"Internal server errror"})
-    }
-
-   
-})
-
-//GET method to get the person
-app.get('/person',async(req,res)=>{
-
-    try{
-        const data = await Person.find();
-        console.log("data fetched");
-        res.status(200).json(data); 
-    }
-    catch(error){
-        console.log(error);
-        res.status(500).json({error:"Internal server errror"})
-    }
-
-   
-})
-
-//vid 8 part 1
-//post method to add Menu Item
-
-app.post('/menu',async(req,res)=>{
-    try{
-        const data=req.body;
-        const newMenu= new MenuItem(data);
-        const response = await newMenu.save();
-        console.log("data saved");
-        res.status(200).json(response);
-
-    }
-    catch(error){
-        console.log(error);
-        res.status(500).json({error:"Internal server error"})
-    }
-})
-
-//get method to fetch Menu Items
-
-app.get('/menu',async(req,res)=>{
-
-    try{
-        const data = await MenuItem.find();
-        console.log("data fetched");
-        res.status(200).json(data)
-    }
-    catch(error){
-        console.log(error);
-        res.status(500).json({error:"Internal server error"})
-    }
-})
-
-//vid 8 part 2
-// parameterised URL
-
-app.get('/person/:workType',async(req,res)=>{
-
-    try{
-        const workType = req.params.workType //Extract the workType from URL parameter
-
-        if(workType=="chef" || workType=="manager" || workType=="waiter"){
-            const response = await Person.find({work:workType});
-            console.log("response fetched")
-            res.status(200).json(response);
-        }
-        else{
-            res.status(400).json({error:"invalid worktype"})
-        }
-    }
-    catch(error){
-                console.log(error);
-        res.status(500).json({error:"Internal server error"})
-    }
-})
+//use the routers
+app.use('/person',personRoutes);
+app.use('/menu',menuItemRoutes);
 
 app.listen(port, () => {
   console.log(`App listening on port ${port}`)
