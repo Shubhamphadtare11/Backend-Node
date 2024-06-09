@@ -1,0 +1,82 @@
+*SQL and NoSQL terminologies
+Table=Collections
+Row/Record=Document
+Column=Field
+
+*SQL vs NoSQL Commands
+
+1. Create database
+
+In SQL
+CREATE DATABASE Shubham
+
+In mongodb
+use Shubham
+
+2. Create a Table
+
+In SQL
+CREATE TABLE users(
+id INT PRIMARY KEY,
+username VARCHAR(50),
+age INT
+)
+
+In mongodb
+db.createCollection("users");
+
+3. Insert Data
+
+In SQL
+INSERT INTO users (id, username, age)
+VALUES(1, "Shubham", 26)
+
+In mongodb
+db.users.insertOne({id:1,username:"Shubham",age:26});
+
+
+4. Retrieve all data which is present in table/collection
+
+In SQL
+select * from users;
+
+In mongodb
+db.users.find();
+
+5. Retrieve data with condition
+
+In SQL
+select * from users where age>25
+
+In mongodb
+db.users.find({age: {$gt:25}})
+
+6. Update data
+
+In SQL
+UPDATE users SET age=22 WHERE username="Suhana";
+
+In mongodb
+db.users.updateOne({username:"Suhana"},{$set:{age:22}});
+
+6. Delete data
+
+In SQL
+DELETE FROM users WHERE id=1;
+
+In mongodb
+db.users.deeteOne({id:1});
+
+Steps-
+
+1. Open 2 cmd prompts
+2. In first cmd type= mongod, It will start mongodb server
+3. In second cmd type=mongosh, it will run mongo shell
+4. We have to use second cmd for our use
+
+commands
+
+1. show databases=it will show available databases
+2. use "database name"=it will go inside that database/or it will create new if not existing
+3. show collections=it will show existing tables/collections
+
