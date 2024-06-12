@@ -87,13 +87,11 @@
 const express = require('express')
 const app = express()
 //vid 7 part 1
-const db = require('./db')
+const db = require('./db');
+require('dotenv').config();
+const passport = require('./auth')  
 //vid 7 part 2
 const bodyParser = require('body-parser');
-const passport = require('passport');
-const Person = require('./models/Person')
-const LocalStrategy = require('passport-local').Strategy;
-require('dotenv').config();
 app.use(bodyParser.json())//it will store parsed data in req.body
 const PORT = process.env.PORT || 3000;
 
@@ -106,33 +104,11 @@ const logRequest = (req,res,next)=>{
 
 app.use(logRequest);
 
-passport.use(new LocalStrategy(async(USERNAME,password,done)=>{
-  //authentication logic here
-  try{
-    console.log('Received Credentials:',USERNAME, password);
-    const user = await Person.findOne({username:USERNAME});
-    if(!user){
-      return done(null, false, {message: 'Incorrect username.'});
-    }
-    
-    const isPasswordMatch = user.password ===password ? true : false;
-
-    if(isPasswordMatch){
-      return done(null,user)
-    }else{
-      return done(null, false,{message: 'Incorrect password.'});
-    }
-  }
-  catch(error){
-    return done(error)
-  }
-
-}))
-
+app.use(passport.initialize());
 
 const localAuthMiddleware = passport.authenticate('local',{session:false});
 
-app.get('/',localAuthMiddleware,(req, res) => {
+app.get('/',(req, res) => {
   res.send('Hello World!')
 })
 
@@ -141,8 +117,8 @@ const personRoutes = require('./routes/personRoutes');
 const menuItemRoutes = require('./routes/menuItemRoutes');
 
 //use the routers
-app.use('/person',localAuthMiddleware,personRoutes);
-app.use('/menu',localAuthMiddleware,menuItemRoutes);
+app.use('/person',personRoutes);
+app.use('/menu',menuItemRoutes);
 
 app.listen(PORT, () => {
   console.log(`App listening on port ${PORT}`)
